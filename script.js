@@ -130,27 +130,6 @@ tipButtons.forEach(button => {
     // iOS Safari specific handling - use onclick attribute approach
     if (isIOS) {
         // For iOS, we rely primarily on the onclick attribute set earlier
-        // Add minimal event listeners for visual feedback only
-        button.addEventListener('mousedown', (e) => {
-            button.classList.add('ios-pressed');
-        });
-        
-        button.addEventListener('mouseup', (e) => {
-            setTimeout(() => {
-                button.classList.remove('ios-pressed');
-            }, 100);
-        });
-        
-        button.addEventListener('touchstart', (e) => {
-            button.classList.add('ios-pressed');
-        }, { passive: true });
-        
-        button.addEventListener('touchend', (e) => {
-            setTimeout(() => {
-                button.classList.remove('ios-pressed');
-            }, 100);
-        }, { passive: true });
-        
     } else {
         // For all other platforms (Android, Windows, etc.)
         button.addEventListener('click', handleTipSelection);
@@ -203,34 +182,17 @@ if (resetButton) {
 
     // iOS Safari specific handling
     if (isIOS) {
-        // For iOS, use simpler approach with click events and visual feedback
+        // For iOS, use simpler approach with click events only
         resetButton.addEventListener('click', handleReset);
-        
-        // Add visual feedback for iOS
-        resetButton.addEventListener('mousedown', (e) => {
-            e.preventDefault();
-            resetButton.classList.add('ios-pressed');
-        });
-        
-        resetButton.addEventListener('mouseup', (e) => {
-            e.preventDefault();
-            setTimeout(() => {
-                resetButton.classList.remove('ios-pressed');
-            }, 100);
-        });
         
         // Also handle touch for iOS
         resetButton.addEventListener('touchstart', (e) => {
             e.stopPropagation();
-            resetButton.classList.add('ios-pressed');
         }, { passive: false });
         
         resetButton.addEventListener('touchend', (e) => {
             e.preventDefault();
             e.stopPropagation();
-            setTimeout(() => {
-                resetButton.classList.remove('ios-pressed');
-            }, 100);
             // Trigger reset manually for iOS
             handleReset(e);
         }, { passive: false });
