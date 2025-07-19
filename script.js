@@ -24,13 +24,38 @@ const isWindows = /Win/.test(navigator.platform);
 if (isIOS) {
     // Force iOS Safari to recognize buttons as interactive
     document.addEventListener('DOMContentLoaded', () => {
+        // Create a global function for iOS tip selection
+        window.selectTip = function(tipValue, buttonElement) {
+            // Check if the clicked button is already active
+            const isAlreadyActive = buttonElement.classList.contains('active');
+
+            if (isAlreadyActive) {
+                // If already active, deactivate it (toggle off)
+                buttonElement.classList.remove('active');
+                delete buttonElement.dataset.tip;
+            } else {
+                // Remove active class from all buttons
+                tipButtons.forEach(btn => btn.classList.remove('active'));
+                // Add active class to clicked button
+                buttonElement.classList.add('active');
+                buttonElement.dataset.tip = tipValue;
+            }
+
+            // Clear custom tip input when any button is clicked
+            customTipInput.value = '';
+            // Recalculate tip
+            calculateTip();
+        };
+        
         tipButtons.forEach((button, index) => {
-            // Add onclick attribute for iOS Safari
-            button.setAttribute('onclick', `void(0)`);
+            // Add onclick attribute for iOS Safari with direct function call
+            button.setAttribute('onclick', `window.selectTip(${button.value}, this)`);
             // Add role for accessibility
             button.setAttribute('role', 'button');
             // Add aria-label
             button.setAttribute('aria-label', `Select ${button.textContent} tip`);
+            // Make it focusable
+            button.setAttribute('tabindex', '0');
         });
     });
 }
@@ -74,40 +99,29 @@ tipButtons.forEach(button => {
         calculateTip();
     };
 
-    // iOS Safari specific handling - use ONLY click events
+    // iOS Safari specific handling - use onclick attribute approach
     if (isIOS) {
-        // For iOS, we'll use a simpler approach with just click events
-        // and add visual feedback with CSS
-        button.addEventListener('click', handleTipSelection);
-        
-        // Add visual feedback for iOS
+        // For iOS, we rely primarily on the onclick attribute set earlier
+        // Add minimal event listeners for visual feedback only
         button.addEventListener('mousedown', (e) => {
-            e.preventDefault();
             button.classList.add('ios-pressed');
         });
         
         button.addEventListener('mouseup', (e) => {
-            e.preventDefault();
             setTimeout(() => {
                 button.classList.remove('ios-pressed');
             }, 100);
         });
         
-        // Also handle touch for iOS, but much simpler
         button.addEventListener('touchstart', (e) => {
-            e.stopPropagation();
             button.classList.add('ios-pressed');
-        }, { passive: false });
+        }, { passive: true });
         
         button.addEventListener('touchend', (e) => {
-            e.preventDefault();
-            e.stopPropagation();
             setTimeout(() => {
                 button.classList.remove('ios-pressed');
             }, 100);
-            // Trigger click event manually for iOS
-            handleTipSelection(e);
-        }, { passive: false });
+        }, { passive: true });
         
     } else {
         // For all other platforms (Android, Windows, etc.)
