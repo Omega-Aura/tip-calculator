@@ -1,0 +1,570 @@
+/* ===========================================
+   GLOBAL STYLES
+=========================================== */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    /* Better touch handling for mobile */
+    -webkit-tap-highlight-color: transparent;
+    -webkit-touch-callout: none;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+}
+
+/* Allow text selection for inputs */
+input,
+button {
+    -webkit-user-select: auto;
+    -moz-user-select: auto;
+    -ms-user-select: auto;
+    user-select: auto;
+}
+
+body {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
+        "Helvetica Neue", Arial, sans-serif;
+    color: #2d3748;
+    line-height: 1.6;
+    margin: 0;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: flex-start;
+    padding: clamp(10px, 2.5vw, 20px);
+    /* Prevent zoom on input focus - iOS */
+    -webkit-text-size-adjust: 100%;
+    /* Smooth scrolling for all platforms */
+    scroll-behavior: smooth;
+    /* Responsive font size */
+    font-size: clamp(14px, 1.2vw, 16px);
+}
+
+/* ===========================================
+   CALCULATOR CONTAINER
+=========================================== */
+.calculator-container {
+    background: rgba(255, 255, 255, 0.95);
+    backdrop-filter: blur(10px);
+    border-radius: 20px;
+    max-width: 800px;
+    width: 100%;
+    padding: 40px;
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1),
+        0 8px 16px rgba(0, 0, 0, 0.06);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    display: flex;
+    flex-direction: row;
+    gap: 40px;
+    align-items: stretch;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    /* Ensure container grows with content */
+    min-height: auto;
+    flex: 0 0 auto;
+    margin-top: 20px;
+}
+
+/* ===========================================
+   INPUT SECTION
+=========================================== */
+.input-section {
+    display: flex;
+    flex-direction: column;
+    gap: 25px;
+    flex: 1;
+    min-width: 300px;
+    max-width: 400px;
+}
+
+.form-control {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    width: 100%;
+}
+
+/* Labels */
+label,
+.form-control>p {
+    display: block;
+    font-size: clamp(12px, 1.5vw, 14px);
+    font-weight: 600;
+    color: #4a5568;
+    margin-bottom: 8px;
+    letter-spacing: 0.025em;
+}
+
+/* Input Fields */
+.input-field {
+    width: 100%;
+    padding: clamp(12px, 2vw, 16px) clamp(14px, 2.5vw, 20px);
+    border: 2px solid #e2e8f0;
+    border-radius: 12px;
+    font-size: clamp(14px, 1.8vw, 16px);
+    /* Prevent zoom on iOS */
+    font-weight: 500;
+    background-color: #ffffff;
+    transition: all 0.3s ease;
+    outline: none;
+    /* Better mobile input handling */
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    appearance: none;
+    /* Prevent iOS input shadow */
+    -webkit-box-shadow: none;
+    box-shadow: none;
+}
+
+.input-field:hover {
+    border-color: #cbd5e0;
+    background-color: #f7fafc;
+    transform: translateY(-1px);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.08);
+}
+
+.input-field:focus {
+    border-color: #667eea;
+    box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+    background-color: #ffffff;
+    transform: translateY(0);
+    /* Prevent iOS blue highlight */
+    -webkit-tap-highlight-color: transparent;
+}
+
+.input-field::placeholder {
+    color: #a0aec0;
+}
+
+/* Number input specific styles */
+input[type="number"] {
+    -moz-appearance: textfield;
+    /* Firefox */
+    appearance: textfield;
+}
+
+input[type="number"]::-webkit-outer-spin-button,
+input[type="number"]::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+}
+
+/* ===========================================
+   TIP BUTTONS
+=========================================== */
+.tip-buttons-container {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+    margin-bottom: 16px;
+    justify-content: space-between;
+}
+
+.tip-percent-btn {
+    padding: clamp(12px, 2vw, 16px) clamp(8px, 1.5vw, 12px);
+    background: linear-gradient(135deg, #4299e1 0%, #3182ce 100%);
+    color: #ffffff;
+    border: none;
+    border-radius: 12px;
+    font-size: clamp(13px, 1.6vw, 16px);
+    font-weight: 600;
+    text-align: center;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    /* Better touch targets for mobile */
+    min-height: 48px;
+    min-width: 48px;
+    /* Flexible width */
+    flex: 1;
+    max-width: calc(33.333% - 8px);
+    /* Prevent text selection */
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+    /* Remove default button styling */
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    appearance: none;
+    /* Prevent iOS blue highlight */
+    -webkit-tap-highlight-color: transparent;
+}
+
+.tip-percent-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
+    background: linear-gradient(135deg, #3182ce 0%, #2c5282 100%);
+}
+
+.tip-percent-btn:active {
+    transform: translateY(0);
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.tip-percent-btn.active {
+    background: linear-gradient(135deg, #48bb78 0%, #38a169 100%);
+    transform: translateY(-2px);
+    box-shadow: 0 6px 12px rgba(72, 187, 120, 0.3);
+}
+
+.custom-tip-input {
+    margin-top: 8px;
+    width: 100%;
+    flex: 1 1 100%;
+}
+
+/* ===========================================
+   OUTPUT SECTION
+=========================================== */
+.output-section {
+    background: linear-gradient(135deg, #1a202c 0%, #2d3748 100%);
+    padding: 30px;
+    border-radius: 16px;
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+    flex: 1;
+    min-width: 300px;
+    max-width: 400px;
+    justify-content: space-between;
+}
+
+.result-line {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 20px 0;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.result-line:last-child {
+    border-bottom: none;
+    padding-bottom: 0;
+}
+
+.result-label p {
+    color: #ffffff;
+    font-size: clamp(14px, 1.6vw, 16px);
+    margin: 0;
+    font-weight: 600;
+    letter-spacing: 0.025em;
+}
+
+.result-label span {
+    color: #a0aec0;
+    font-size: clamp(12px, 1.4vw, 14px);
+    display: block;
+    margin-top: 2px;
+}
+
+.result-value span {
+    color: #4fd1c7;
+    font-size: clamp(20px, 4vw, 32px);
+    font-weight: 700;
+    text-align: right;
+    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+/* ===========================================
+   RESET BUTTON
+=========================================== */
+.reset-btn {
+    width: 100%;
+    padding: clamp(12px, 2vw, 16px);
+    background: linear-gradient(135deg, #ed8936 0%, #dd6b20 100%);
+    color: #ffffff;
+    border: none;
+    border-radius: 12px;
+    font-size: clamp(14px, 1.6vw, 16px);
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    margin-top: 16px;
+    /* Better touch targets for mobile */
+    min-height: 48px;
+    /* Prevent text selection */
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+    /* Remove default button styling */
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    appearance: none;
+    /* Prevent iOS blue highlight */
+    -webkit-tap-highlight-color: transparent;
+}
+
+.reset-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 12px rgba(237, 137, 54, 0.3);
+    background: linear-gradient(135deg, #dd6b20 0%, #c05621 100%);
+}
+
+.reset-btn:active {
+    transform: translateY(0);
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+/* ===========================================
+   FOOTER
+=========================================== */
+.footer {
+    position: relative;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    background: rgba(26, 32, 44, 0.95);
+    backdrop-filter: blur(10px);
+    color: #e2e8f0;
+    text-align: center;
+    padding: 20px;
+    font-size: clamp(11px, 1.2vw, 13px);
+    font-weight: 400;
+    letter-spacing: 0.5px;
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+    margin-top: 40px;
+    box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.1);
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.footer::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 1px;
+    background: linear-gradient(90deg, transparent, rgba(102, 126, 234, 0.5), transparent);
+    transition: all 0.3s ease;
+}
+
+.footer:hover {
+    background: rgba(26, 32, 44, 0.98);
+    transform: translateY(-2px);
+    box-shadow: 0 -4px 20px rgba(0, 0, 0, 0.2);
+    color: #ffffff;
+}
+
+.footer:hover::before {
+    background: linear-gradient(90deg, transparent, rgba(102, 126, 234, 0.8), transparent);
+    height: 2px;
+}
+
+/* ===========================================
+   RESPONSIVE DESIGN
+=========================================== */
+
+/* Tablet breakpoint */
+@media (max-width: 768px) {
+    .calculator-container {
+        flex-direction: column;
+        gap: 30px;
+        padding: 30px 20px;
+        max-width: 600px;
+    }
+
+    .input-section,
+    .output-section {
+        max-width: none;
+        min-width: auto;
+    }
+
+    body {
+        padding: 15px;
+    }
+
+    .footer {
+        font-size: clamp(10px, 1.4vw, 12px);
+        padding: 16px;
+        margin-top: 30px;
+    }
+}
+
+/* Mobile breakpoint */
+@media (max-width: 480px) {
+    .calculator-container {
+        padding: 20px;
+        gap: 20px;
+        border-radius: 16px;
+    }
+
+    body {
+        padding: 10px;
+        font-size: clamp(13px, 1.4vw, 15px);
+    }
+
+    .tip-buttons-container {
+        justify-content: center;
+    }
+
+    .tip-percent-btn {
+        flex: 1;
+        max-width: calc(50% - 6px);
+        font-size: clamp(12px, 1.8vw, 14px);
+    }
+
+    .custom-tip-input {
+        width: 100%;
+    }
+
+    .result-value span {
+        font-size: clamp(18px, 5vw, 24px);
+    }
+
+    .input-field {
+        font-size: clamp(14px, 2vw, 16px);
+        /* Prevent zoom on iOS */
+    }
+
+    .footer {
+        font-size: clamp(9px, 1.6vw, 11px);
+        padding: 14px;
+        margin-top: 25px;
+    }
+}
+
+/* Small mobile breakpoint */
+@media (max-width: 320px) {
+    .calculator-container {
+        padding: 15px;
+        gap: 15px;
+    }
+
+    body {
+        font-size: clamp(12px, 1.6vw, 14px);
+        padding: 10px;
+    }
+
+    .tip-buttons-container {
+        gap: 8px;
+        flex-direction: column;
+    }
+
+    .tip-percent-btn {
+        max-width: none;
+        flex: none;
+        font-size: clamp(11px, 2vw, 13px);
+    }
+
+    .result-value span {
+        font-size: clamp(16px, 6vw, 20px);
+    }
+
+    .input-field {
+        font-size: clamp(13px, 2.2vw, 15px);
+    }
+
+    .footer {
+        font-size: clamp(8px, 1.8vw, 10px);
+        padding: 12px;
+        margin-top: 20px;
+    }
+}
+
+/* Large desktop breakpoint */
+@media (min-width: 1200px) {
+    .calculator-container {
+        max-width: 900px;
+        padding: 50px;
+    }
+}
+
+/* Touch device optimizations */
+@media (hover: none) and (pointer: coarse) {
+    .input-field:hover {
+        border-color: #e2e8f0;
+        background-color: #ffffff;
+        transform: none;
+        box-shadow: none;
+    }
+
+    .tip-percent-btn:hover {
+        transform: none;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        background: linear-gradient(135deg, #4299e1 0%, #3182ce 100%);
+    }
+
+    .reset-btn:hover {
+        transform: none;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        background: linear-gradient(135deg, #ed8936 0%, #dd6b20 100%);
+    }
+}
+
+/* High DPI display support */
+@media (-webkit-min-device-pixel-ratio: 2),
+(min-resolution: 192dpi) {
+    .calculator-container {
+        border-width: 0.5px;
+    }
+
+    .input-field {
+        border-width: 1px;
+    }
+}
+
+/* Dark mode support for system preference */
+@media (prefers-color-scheme: dark) {
+    body {
+        background: linear-gradient(135deg, #1a202c 0%, #2d3748 100%);
+    }
+
+    .calculator-container {
+        background: rgba(45, 55, 72, 0.95);
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        color: #e2e8f0;
+    }
+
+    .input-field {
+        background-color: #4a5568;
+        border-color: #718096;
+        color: #e2e8f0;
+    }
+
+    .input-field:hover {
+        border-color: #a0aec0;
+        background-color: #2d3748;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    }
+
+    .input-field:focus {
+        background-color: #4a5568;
+        border-color: #667eea;
+        box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.2);
+    }
+
+    .input-field::placeholder {
+        color: #a0aec0;
+    }
+
+    label,
+    .form-control>p {
+        color: #cbd5e0;
+    }
+
+    .footer {
+        background: rgba(16, 20, 28, 0.98);
+        color: #cbd5e0;
+        border-top: 1px solid rgba(255, 255, 255, 0.08);
+    }
+
+    .footer:hover {
+        background: rgba(16, 20, 28, 1);
+        color: #ffffff;
+    }
+
+    .footer:hover::before {
+        background: linear-gradient(90deg, transparent, rgba(102, 126, 234, 0.9), transparent);
+    }
+}

@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <title>Interactive Tip Calculator</title>
+    <link rel="stylesheet" href="style.css">
+    <!-- PWA support for mobile -->
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="default">
+    <meta name="theme-color" content="#667eea">
+</head>
+
+<body>
+    <div class="calculator-container">
+        <!-- Input Section -->
+        <div class="input-section">
+            <!-- Bill Amount -->
+            <div class="form-control">
+                <label for="bill-input">Bill</label>
+                <input type="number" id="bill-input" class="input-field" placeholder="Enter bill amount" min="0">
+            </div>
+
+            <!-- Tip Percentage -->
+            <div class="form-control">
+                <p>Select Tip %</p>
+                <div class="tip-buttons-container">
+                    <button type="button" class="tip-percent-btn" value="5">5%</button>
+                    <button type="button" class="tip-percent-btn" value="10">10%</button>
+                    <button type="button" class="tip-percent-btn" value="15">15%</button>
+                    <button type="button" class="tip-percent-btn" value="25">25%</button>
+                    <button type="button" class="tip-percent-btn" value="50">50%</button>
+                    <input type="number" id="custom-tip-input" class="input-field custom-tip-input"
+                        placeholder="Custom Tip" min="0">
+                </div>
+            </div>
+
+            <!-- Number of People -->
+            <div class="form-control">
+                <label for="people-input">Number of People</label>
+                <input type="number" id="num-people" class="input-field" placeholder="Enter number of people" min="1">
+            </div>
+        </div>
+
+        <!-- Output Section -->
+        <div class="output-section">
+            <!-- Tip Amount per Person -->
+            <div class="result-line">
+                <div class="result-label">
+                    <p>Tip Amount</p>
+                    <span>/ person</span>
+                </div>
+                <div class="result-value">
+                    <span id="tip-amount-display">$0.00</span>
+                </div>
+            </div>
+
+            <!-- Total Amount per Person -->
+            <div class="result-line">
+                <div class="result-label">
+                    <p>Total Amount</p>
+                    <span>/ person</span>
+                </div>
+                <div class="result-value">
+                    <span id="total-amount-display">$0.00</span>
+                </div>
+            </div>
+
+            <!-- Reset Button -->
+            <button type="button" id="reset-button" class="reset-btn">RESET</button>
+        </div>
+    </div>
+
+    <script src="script.js" defer></script>
+
+    <footer class="footer">
+        © 2025 Crafted with ❤️ by Aritra
+    </footer>
+</body>
+
+</html>
