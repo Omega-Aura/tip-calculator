@@ -29,7 +29,7 @@ A responsive, cross-platform tip calculator built with HTML, CSS, and JavaScript
 - Press `4` for 25% tip
 - Press `5` for 50% tip
 
-*Note: Shortcuts only work when not typing in input fields*
+_Note: Shortcuts only work when not typing in input fields_
 
 ## Technologies Used
 
