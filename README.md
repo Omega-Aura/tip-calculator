@@ -58,7 +58,7 @@ Open `index.html` in your browser to use the calculator.
 
 ## Author
 
-Crafted with ❤️ by Aritra
+Aritra
 
 ## License
 
