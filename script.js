@@ -31,42 +31,64 @@ peopleInput.addEventListener('input', calculateTip);
 
 // Handle tip button clicks
 tipButtons.forEach(button => {
-    button.addEventListener('click', (e) => {
+    // Primary click event handler
+    const handleTipSelection = (e) => {
+        e.preventDefault();
+        e.stopPropagation();
+        
         // Check if the clicked button is already active
-        const isAlreadyActive = e.target.classList.contains('active');
+        const isAlreadyActive = button.classList.contains('active');
 
         if (isAlreadyActive) {
             // If already active, deactivate it (toggle off)
-            e.target.classList.remove('active');
+            button.classList.remove('active');
             // Clear the data-tip attribute
-            delete e.target.dataset.tip;
+            delete button.dataset.tip;
         } else {
             // Remove active class from all buttons
             tipButtons.forEach(btn => btn.classList.remove('active'));
             // Add active class to clicked button
-            e.target.classList.add('active');
+            button.classList.add('active');
             // Set data-tip attribute for easier access
-            e.target.dataset.tip = e.target.value;
+            button.dataset.tip = button.value;
         }
 
         // Clear custom tip input when any button is clicked
         customTipInput.value = '';
         // Recalculate tip
         calculateTip();
-    });
+    };
 
-    // Add touch event listeners for mobile
+    // Add click event for all platforms
+    button.addEventListener('click', handleTipSelection);
+
+    // Add touch events specifically for mobile devices
     if (isMobile) {
+        let touchHandled = false;
+        
         button.addEventListener('touchstart', (e) => {
-            e.preventDefault(); // Prevent double-tap zoom
-            button.style.transform = 'translateY(0)';
-        });
+            touchHandled = false;
+            button.style.transform = 'translateY(1px)';
+        }, { passive: true });
 
         button.addEventListener('touchend', (e) => {
             e.preventDefault();
+            e.stopPropagation();
+            
+            if (!touchHandled) {
+                touchHandled = true;
+                handleTipSelection(e);
+            }
+            
             setTimeout(() => {
                 button.style.transform = '';
             }, 150);
+        });
+
+        // Prevent double-firing on Android
+        button.addEventListener('touchcancel', () => {
+            touchHandled = false;
+            button.style.transform = '';
         });
     }
 });
