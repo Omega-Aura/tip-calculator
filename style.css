@@ -670,6 +670,42 @@ input[type="number"]::-webkit-inner-spin-button {
         z-index: 1;
     }
     
+    /* Enhanced iOS Safari button interaction */
+    body.ios .tip-percent-btn {
+        cursor: pointer !important;
+        -webkit-user-select: none !important;
+        user-select: none !important;
+        -webkit-touch-callout: none !important;
+        -webkit-tap-highlight-color: rgba(38, 196, 196, 0.3) !important;
+        transform: translateZ(0) !important;
+        will-change: transform !important;
+        touch-action: manipulation !important;
+        pointer-events: auto !important;
+        position: relative !important;
+        z-index: 10 !important;
+    }
+
+    /* Ensure iOS buttons respond to touch with visual feedback */
+    body.ios .tip-percent-btn:active,
+    body.ios .tip-percent-btn.ios-pressed {
+        transform: translateZ(0) scale(0.95) !important;
+        transition: transform 0.1s ease !important;
+    }
+
+    /* Force iOS Safari to recognize interactive area */
+    body.ios .tip-percent-btn::after {
+        content: '';
+        position: absolute;
+        top: -10px;
+        left: -10px;
+        right: -10px;
+        bottom: -10px;
+        z-index: -1;
+        background: transparent;
+        pointer-events: none;
+    }
+    }
+    
     /* Make sure iOS buttons have proper cursor and styling */
     .tip-percent-btn {
         cursor: pointer !important;
@@ -758,4 +794,5 @@ and (orientation: portrait) {
         -webkit-text-size-adjust: none !important;
         touch-action: manipulation !important;
     }
+}
 }

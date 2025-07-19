@@ -22,41 +22,69 @@ const isWindows = /Win/.test(navigator.platform);
 
 // iOS Safari specific setup
 if (isIOS) {
-    // Force iOS Safari to recognize buttons as interactive
-    document.addEventListener('DOMContentLoaded', () => {
-        // Create a global function for iOS tip selection
-        window.selectTip = function(tipValue, buttonElement) {
-            // Check if the clicked button is already active
-            const isAlreadyActive = buttonElement.classList.contains('active');
-
-            if (isAlreadyActive) {
-                // If already active, deactivate it (toggle off)
-                buttonElement.classList.remove('active');
-                delete buttonElement.dataset.tip;
-            } else {
-                // Remove active class from all buttons
-                tipButtons.forEach(btn => btn.classList.remove('active'));
-                // Add active class to clicked button
-                buttonElement.classList.add('active');
-                buttonElement.dataset.tip = tipValue;
-            }
-
-            // Clear custom tip input when any button is clicked
-            customTipInput.value = '';
-            // Recalculate tip
-            calculateTip();
-        };
+    // Create a global function for iOS tip selection
+    window.selectTip = function(tipValue, buttonElement) {
+        console.log('iOS selectTip called with:', tipValue, buttonElement);
         
-        tipButtons.forEach((button, index) => {
-            // Add onclick attribute for iOS Safari with direct function call
-            button.setAttribute('onclick', `window.selectTip(${button.value}, this)`);
-            // Add role for accessibility
-            button.setAttribute('role', 'button');
-            // Add aria-label
-            button.setAttribute('aria-label', `Select ${button.textContent} tip`);
-            // Make it focusable
-            button.setAttribute('tabindex', '0');
-        });
+        // Check if the clicked button is already active
+        const isAlreadyActive = buttonElement.classList.contains('active');
+
+        if (isAlreadyActive) {
+            // If already active, deactivate it (toggle off)
+            buttonElement.classList.remove('active');
+            delete buttonElement.dataset.tip;
+        } else {
+            // Remove active class from all buttons
+            const allButtons = document.querySelectorAll('.tip-percent-btn');
+            allButtons.forEach(btn => btn.classList.remove('active'));
+            // Add active class to clicked button
+            buttonElement.classList.add('active');
+            buttonElement.dataset.tip = tipValue;
+        }
+
+        // Clear custom tip input when any button is clicked
+        const customInput = document.getElementById('custom-tip-input');
+        if (customInput) {
+            customInput.value = '';
+        }
+        
+        // Recalculate tip
+        calculateTip();
+    };
+    
+    // Force iOS Safari to recognize buttons as interactive immediately
+    document.addEventListener('DOMContentLoaded', () => {
+        setTimeout(() => {
+            const buttons = document.querySelectorAll('.tip-percent-btn');
+            buttons.forEach((button, index) => {
+                // Multiple approaches for iOS Safari
+                button.setAttribute('onclick', `window.selectTip(${button.value}, this); return false;`);
+                button.setAttribute('role', 'button');
+                button.setAttribute('aria-label', `Select ${button.textContent} tip`);
+                button.setAttribute('tabindex', '0');
+                
+                // Force iOS to recognize as interactive element
+                button.style.cursor = 'pointer';
+                button.style.webkitUserSelect = 'none';
+                button.style.webkitTouchCallout = 'none';
+                
+                // Add direct event listener as backup
+                button.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    console.log('iOS backup click handler triggered for button:', this.value);
+                    window.selectTip(this.value, this);
+                }, true);
+                
+                // Add touch events as additional backup
+                button.addEventListener('touchend', function(e) {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    console.log('iOS touchend handler triggered for button:', this.value);
+                    window.selectTip(this.value, this);
+                }, true);
+            });
+        }, 100);
     });
 }
 
