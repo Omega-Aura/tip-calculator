@@ -59,25 +59,47 @@ tipButtons.forEach(button => {
         calculateTip();
     };
 
+    // For iOS Safari - add cursor pointer style to make it clickable
+    if (isIOS) {
+        button.style.cursor = 'pointer';
+        // iOS Safari requires this for clickable elements
+        button.style.webkitUserSelect = 'none';
+    }
+
     // Add click event for all platforms
     button.addEventListener('click', handleTipSelection);
 
     // Add touch events specifically for mobile devices
     if (isMobile) {
         let touchHandled = false;
+        let touchStartTime = 0;
         
         button.addEventListener('touchstart', (e) => {
             touchHandled = false;
+            touchStartTime = Date.now();
             button.style.transform = 'translateY(1px)';
+            
+            // iOS Safari specific: add active state
+            if (isIOS) {
+                button.classList.add('ios-touching');
+            }
         }, { passive: true });
 
         button.addEventListener('touchend', (e) => {
             e.preventDefault();
             e.stopPropagation();
             
-            if (!touchHandled) {
+            const touchDuration = Date.now() - touchStartTime;
+            
+            // Only handle if it's a tap (not a long press) and not already handled
+            if (!touchHandled && touchDuration < 500) {
                 touchHandled = true;
                 handleTipSelection(e);
+            }
+            
+            // Remove iOS specific class
+            if (isIOS) {
+                button.classList.remove('ios-touching');
             }
             
             setTimeout(() => {
@@ -85,9 +107,45 @@ tipButtons.forEach(button => {
             }, 150);
         });
 
-        // Prevent double-firing on Android
+        // Prevent double-firing on Android and handle iOS touch cancel
         button.addEventListener('touchcancel', () => {
             touchHandled = false;
+            button.style.transform = '';
+            if (isIOS) {
+                button.classList.remove('ios-touching');
+            }
+        });
+
+        // iOS Safari specific: handle touchmove to cancel if user drags
+        if (isIOS) {
+            button.addEventListener('touchmove', (e) => {
+                const touch = e.touches[0];
+                const rect = button.getBoundingClientRect();
+                const isStillInside = (
+                    touch.clientX >= rect.left &&
+                    touch.clientX <= rect.right &&
+                    touch.clientY >= rect.top &&
+                    touch.clientY <= rect.bottom
+                );
+                
+                if (!isStillInside) {
+                    touchHandled = true; // Cancel the touch
+                    button.classList.remove('ios-touching');
+                    button.style.transform = '';
+                }
+            }, { passive: true });
+        }
+    }
+
+    // iOS Safari fallback - sometimes needs mousedown/mouseup
+    if (isIOS) {
+        button.addEventListener('mousedown', (e) => {
+            e.preventDefault();
+            button.style.transform = 'translateY(1px)';
+        });
+
+        button.addEventListener('mouseup', (e) => {
+            e.preventDefault();
             button.style.transform = '';
         });
     }
