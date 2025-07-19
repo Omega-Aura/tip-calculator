@@ -315,6 +315,17 @@ input[type="number"]::-webkit-inner-spin-button {
     appearance: none;
     /* Prevent iOS blue highlight */
     -webkit-tap-highlight-color: transparent;
+    /* iOS Safari specific fixes */
+    position: relative;
+    -webkit-transform: translateZ(0);
+    transform: translateZ(0);
+    will-change: transform, background;
+    background-clip: padding-box;
+    outline: none;
+    /* Touch improvements */
+    touch-action: manipulation;
+    -webkit-touch-callout: none;
+    pointer-events: auto;
 }
 
 .reset-btn:hover {
@@ -618,7 +629,8 @@ input[type="number"]::-webkit-inner-spin-button {
 =========================================== */
 @supports (-webkit-touch-callout: none) {
     /* iOS Safari specific styles */
-    .tip-percent-btn {
+    .tip-percent-btn,
+    .reset-btn {
         /* Force hardware acceleration */
         -webkit-transform: translateZ(0);
         transform: translateZ(0);
@@ -638,11 +650,42 @@ input[type="number"]::-webkit-inner-spin-button {
         /* iOS specific border fixes */
         border: 0;
         outline: none;
+        /* Make sure iOS recognizes it as clickable */
+        -webkit-user-select: none;
+        user-select: none;
+        /* Force button to be recognized as interactive */
+        pointer-events: auto;
+    }
+    
+    /* Force iOS to recognize buttons as clickable */
+    .tip-percent-btn:before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        pointer-events: auto;
+        cursor: pointer;
     }
     
     /* iOS touching state */
     .tip-percent-btn.ios-touching {
         background: linear-gradient(135deg, #3182ce 0%, #2c5282 100%) !important;
+        transform: translateY(1px) translateZ(0) !important;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2) !important;
+    }
+    
+    /* iOS pressed state - simpler approach */
+    .tip-percent-btn.ios-pressed {
+        background: linear-gradient(135deg, #3182ce 0%, #2c5282 100%) !important;
+        transform: translateY(1px) translateZ(0) !important;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2) !important;
+    }
+    
+    /* iOS pressed state for reset button */
+    .reset-btn.ios-pressed {
+        background: linear-gradient(135deg, #dd6b20 0%, #c05621 100%) !important;
         transform: translateY(1px) translateZ(0) !important;
         box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2) !important;
     }
@@ -667,5 +710,42 @@ input[type="number"]::-webkit-inner-spin-button {
         /* Better rendering */
         -webkit-transform: translateZ(0);
         transform: translateZ(0);
+    }
+}
+
+/* ===========================================
+   iOS DEVICE-SPECIFIC FIXES
+=========================================== */
+@media only screen 
+and (min-device-width: 375px) 
+and (max-device-width: 812px) 
+and (-webkit-min-device-pixel-ratio: 2)
+and (orientation: portrait) {
+    /* iPhone specific fixes */
+    .tip-percent-btn,
+    .reset-btn {
+        /* Ensure buttons are large enough for iOS */
+        min-height: 55px !important;
+        min-width: 55px !important;
+        /* Force iOS to recognize as tappable */
+        -webkit-user-select: none !important;
+        user-select: none !important;
+        -webkit-touch-callout: none !important;
+        -webkit-tap-highlight-color: rgba(0,0,0,0) !important;
+        /* Make sure background doesn't interfere */
+        background-clip: padding-box !important;
+        /* Ensure proper touch events */
+        touch-action: manipulation !important;
+        pointer-events: auto !important;
+        /* Force hardware acceleration */
+        -webkit-transform: translate3d(0,0,0) !important;
+        transform: translate3d(0,0,0) !important;
+    }
+    
+    /* iOS Safari viewport */
+    body {
+        -webkit-touch-callout: none !important;
+        -webkit-text-size-adjust: none !important;
+        touch-action: manipulation !important;
     }
 }

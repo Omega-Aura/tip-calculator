@@ -20,6 +20,21 @@ const isAndroid = /Android/.test(navigator.userAgent);
 const isMac = /Mac/.test(navigator.platform);
 const isWindows = /Win/.test(navigator.platform);
 
+// iOS Safari specific setup
+if (isIOS) {
+    // Force iOS Safari to recognize buttons as interactive
+    document.addEventListener('DOMContentLoaded', () => {
+        tipButtons.forEach((button, index) => {
+            // Add onclick attribute for iOS Safari
+            button.setAttribute('onclick', `void(0)`);
+            // Add role for accessibility
+            button.setAttribute('role', 'button');
+            // Add aria-label
+            button.setAttribute('aria-label', `Select ${button.textContent} tip`);
+        });
+    });
+}
+
 // ===========================================
 //           EVENT LISTENERS
 // ===========================================
@@ -59,117 +74,168 @@ tipButtons.forEach(button => {
         calculateTip();
     };
 
-    // For iOS Safari - add cursor pointer style to make it clickable
+    // iOS Safari specific handling - use ONLY click events
     if (isIOS) {
-        button.style.cursor = 'pointer';
-        // iOS Safari requires this for clickable elements
-        button.style.webkitUserSelect = 'none';
-    }
-
-    // Add click event for all platforms
-    button.addEventListener('click', handleTipSelection);
-
-    // Add touch events specifically for mobile devices
-    if (isMobile) {
-        let touchHandled = false;
-        let touchStartTime = 0;
+        // For iOS, we'll use a simpler approach with just click events
+        // and add visual feedback with CSS
+        button.addEventListener('click', handleTipSelection);
         
+        // Add visual feedback for iOS
+        button.addEventListener('mousedown', (e) => {
+            e.preventDefault();
+            button.classList.add('ios-pressed');
+        });
+        
+        button.addEventListener('mouseup', (e) => {
+            e.preventDefault();
+            setTimeout(() => {
+                button.classList.remove('ios-pressed');
+            }, 100);
+        });
+        
+        // Also handle touch for iOS, but much simpler
         button.addEventListener('touchstart', (e) => {
-            touchHandled = false;
-            touchStartTime = Date.now();
-            button.style.transform = 'translateY(1px)';
-            
-            // iOS Safari specific: add active state
-            if (isIOS) {
-                button.classList.add('ios-touching');
-            }
-        }, { passive: true });
-
+            e.stopPropagation();
+            button.classList.add('ios-pressed');
+        }, { passive: false });
+        
         button.addEventListener('touchend', (e) => {
             e.preventDefault();
             e.stopPropagation();
-            
-            const touchDuration = Date.now() - touchStartTime;
-            
-            // Only handle if it's a tap (not a long press) and not already handled
-            if (!touchHandled && touchDuration < 500) {
-                touchHandled = true;
-                handleTipSelection(e);
-            }
-            
-            // Remove iOS specific class
-            if (isIOS) {
-                button.classList.remove('ios-touching');
-            }
-            
             setTimeout(() => {
-                button.style.transform = '';
-            }, 150);
-        });
+                button.classList.remove('ios-pressed');
+            }, 100);
+            // Trigger click event manually for iOS
+            handleTipSelection(e);
+        }, { passive: false });
+        
+    } else {
+        // For all other platforms (Android, Windows, etc.)
+        button.addEventListener('click', handleTipSelection);
 
-        // Prevent double-firing on Android and handle iOS touch cancel
-        button.addEventListener('touchcancel', () => {
-            touchHandled = false;
-            button.style.transform = '';
-            if (isIOS) {
-                button.classList.remove('ios-touching');
-            }
-        });
-
-        // iOS Safari specific: handle touchmove to cancel if user drags
-        if (isIOS) {
-            button.addEventListener('touchmove', (e) => {
-                const touch = e.touches[0];
-                const rect = button.getBoundingClientRect();
-                const isStillInside = (
-                    touch.clientX >= rect.left &&
-                    touch.clientX <= rect.right &&
-                    touch.clientY >= rect.top &&
-                    touch.clientY <= rect.bottom
-                );
-                
-                if (!isStillInside) {
-                    touchHandled = true; // Cancel the touch
-                    button.classList.remove('ios-touching');
-                    button.style.transform = '';
-                }
+        // Add touch events for mobile devices (non-iOS)
+        if (isMobile) {
+            let touchHandled = false;
+            let touchStartTime = 0;
+            
+            button.addEventListener('touchstart', (e) => {
+                touchHandled = false;
+                touchStartTime = Date.now();
+                button.style.transform = 'translateY(1px)';
             }, { passive: true });
+
+            button.addEventListener('touchend', (e) => {
+                e.preventDefault();
+                e.stopPropagation();
+                
+                const touchDuration = Date.now() - touchStartTime;
+                
+                // Only handle if it's a tap (not a long press) and not already handled
+                if (!touchHandled && touchDuration < 500) {
+                    touchHandled = true;
+                    handleTipSelection(e);
+                }
+                
+                setTimeout(() => {
+                    button.style.transform = '';
+                }, 150);
+            });
+
+            // Handle touch cancel
+            button.addEventListener('touchcancel', () => {
+                touchHandled = false;
+                button.style.transform = '';
+            });
         }
-    }
-
-    // iOS Safari fallback - sometimes needs mousedown/mouseup
-    if (isIOS) {
-        button.addEventListener('mousedown', (e) => {
-            e.preventDefault();
-            button.style.transform = 'translateY(1px)';
-        });
-
-        button.addEventListener('mouseup', (e) => {
-            e.preventDefault();
-            button.style.transform = '';
-        });
     }
 });
 
 // Handle reset button click
 if (resetButton) {
-    resetButton.addEventListener('click', () => {
+    // Primary reset handler
+    const handleReset = (e) => {
+        e.preventDefault();
+        e.stopPropagation();
         resetCalculator();
-    });
+    };
 
-    // Add touch event listeners for mobile
-    if (isMobile) {
-        resetButton.addEventListener('touchstart', (e) => {
+    // iOS Safari specific handling
+    if (isIOS) {
+        // For iOS, use simpler approach with click events and visual feedback
+        resetButton.addEventListener('click', handleReset);
+        
+        // Add visual feedback for iOS
+        resetButton.addEventListener('mousedown', (e) => {
             e.preventDefault();
-            resetButton.style.transform = 'translateY(0)';
+            resetButton.classList.add('ios-pressed');
         });
-
-        resetButton.addEventListener('touchend', (e) => {
+        
+        resetButton.addEventListener('mouseup', (e) => {
             e.preventDefault();
             setTimeout(() => {
-                resetButton.style.transform = '';
-            }, 150);
+                resetButton.classList.remove('ios-pressed');
+            }, 100);
         });
+        
+        // Also handle touch for iOS
+        resetButton.addEventListener('touchstart', (e) => {
+            e.stopPropagation();
+            resetButton.classList.add('ios-pressed');
+        }, { passive: false });
+        
+        resetButton.addEventListener('touchend', (e) => {
+            e.preventDefault();
+            e.stopPropagation();
+            setTimeout(() => {
+                resetButton.classList.remove('ios-pressed');
+            }, 100);
+            // Trigger reset manually for iOS
+            handleReset(e);
+        }, { passive: false });
+        
+        // Add onclick attribute for iOS Safari compatibility
+        resetButton.setAttribute('onclick', 'void(0)');
+        resetButton.setAttribute('role', 'button');
+        resetButton.setAttribute('aria-label', 'Reset calculator');
+        
+    } else {
+        // For all other platforms (Android, Windows, etc.)
+        resetButton.addEventListener('click', handleReset);
+
+        // Add touch events for mobile devices (non-iOS)
+        if (isMobile) {
+            let touchHandled = false;
+            let touchStartTime = 0;
+            
+            resetButton.addEventListener('touchstart', (e) => {
+                touchHandled = false;
+                touchStartTime = Date.now();
+                resetButton.style.transform = 'translateY(1px)';
+            }, { passive: true });
+
+            resetButton.addEventListener('touchend', (e) => {
+                e.preventDefault();
+                e.stopPropagation();
+                
+                const touchDuration = Date.now() - touchStartTime;
+                
+                // Only handle if it's a tap and not already handled
+                if (!touchHandled && touchDuration < 500) {
+                    touchHandled = true;
+                    handleReset(e);
+                }
+                
+                setTimeout(() => {
+                    resetButton.style.transform = '';
+                }, 150);
+            });
+
+            // Handle touch cancel
+            resetButton.addEventListener('touchcancel', () => {
+                touchHandled = false;
+                resetButton.style.transform = '';
+            });
+        }
     }
 } else {
     console.error('Reset button not found');
